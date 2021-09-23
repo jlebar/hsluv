@@ -182,7 +182,7 @@ class Hsluv {
         if (Y <= epsilon) {
             return (Y / refY) * kappa;
         } else {
-            return 116 * Math.pow(Y / refY, 1.0 / 3.0) - 16;
+            return 116 * Math.cbrt(Y / refY) - 16;
         }
     }
 
@@ -190,7 +190,9 @@ class Hsluv {
         if (L <= 8) {
             return refY * L / kappa;
         } else {
-            return refY * Math.pow((L + 16) / 116, 3);
+            // x * x * x is significantly faster than pow(x, 3), at least in V8.
+            var x = (L + 16) / 116;
+            return refY * x * x * x;
         }
     }
 
